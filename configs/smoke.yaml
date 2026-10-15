@@ -1,0 +1,37 @@
+paper:
+  slug: an-attack-on-facial-soft-biometric-privacy-enhancement
+  title: "An Attack on Facial Soft-Biometric Privacy Enhancement"
+data:
+  celeba_root: ../../datasets/celeba/extracted/celeba
+  lfw_root: ../../datasets/lfw
+  root: ../../datasets/celeba/extracted/celeba
+  train_ratio: 0.7
+  max_images: 1024
+model:
+  image_size: 112
+  pretrained: true
+privacy:
+  block_size: 16
+train:
+  protocol: smoke
+  seed: 42
+  num_workers: 2
+  batch_size: 32
+  epochs: 1
+  lr: 0.05
+eval:
+  batch_size: 64
+  max_lfw_pairs: 200
+attack:
+  max_gallery: 200
+  max_probe: 100
+  max_gallery_recon: 100
+  reconstruct_match: true
+  n_list: [1, 5, 10]
+  modes: [majority, average]
+paths:
+  checkpoint_dir: outputs/checkpoints/smoke
+  log_dir: outputs/logs/smoke
+  pred_dir: outputs/predictions/smoke
+  figure_dir: outputs/figures/smoke
+device: cuda
