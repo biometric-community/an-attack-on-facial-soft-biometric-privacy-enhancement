@@ -1,0 +1,22 @@
+# Published values from Osorio-Roig et al., "An Attack on Facial Soft-Biometric
+# Privacy Enhancement", IEEE TBIOM 2022 (arXiv:2111.12405). All values in %.
+source: arXiv:2111.12405
+tolerance_pp: 1.0
+
+table_iii_lfw_pe_miu:
+  original_eer: 0.55
+  protected_eer: 0.64
+
+# Tables V-VIII, PE-MIU rows: smallest and largest attack success rate.
+attack_success_pe_miu:
+  min: 70.01
+  max: 94.43
+
+# Table IX, best average PE-MIU attack success rate across scenarios.
+table_ix_pe_miu:
+  "1": 85.23
+  "5": 88.12
+  "10": 88.65
+  "50": 88.95
+  "100": 88.26
+  "200": 86.91
