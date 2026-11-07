@@ -25,9 +25,9 @@ eval:
 attack:
   max_gallery: 200
   max_probe: 100
-  max_gallery_recon: 100
+  max_gallery_recon: 200
   reconstruct_match: true
-  n_list: [1, 5, 10]
+  n_list: [1, 5, 11]
   modes: [majority, average]
 paths:
   checkpoint_dir: outputs/checkpoints/smoke

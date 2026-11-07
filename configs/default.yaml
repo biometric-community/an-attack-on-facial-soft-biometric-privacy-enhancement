@@ -25,9 +25,9 @@ eval:
 attack:
   max_gallery: 2000
   max_probe: 1000
-  max_gallery_recon: 400
+  max_gallery_recon: 2000
   reconstruct_match: true
-  n_list: [1, 5, 10, 50]
+  n_list: [1, 5, 11, 51]
   modes: [majority, average, linear, log]
 paths:
   checkpoint_dir: outputs/checkpoints/full

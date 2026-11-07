@@ -37,18 +37,24 @@ def _device(cfg: dict, override: Optional[str] = None) -> torch.device:
     return torch.device(name)
 
 
+def equal_error_rate(scores: np.ndarray, labels: np.ndarray) -> float:
+    """Error rate at the threshold where FMR and FNMR are closest."""
+    mated = labels[np.argsort(scores)] == 1
+    if mated.all() or not mated.any():
+        return 1.0
+    fnmr = np.cumsum(mated) / mated.sum()
+    fmr = 1.0 - np.cumsum(~mated) / (~mated).sum()
+    i = int(np.argmin(np.abs(fmr - fnmr)))
+    return float(0.5 * (fmr[i] + fnmr[i]))
+
+
 def best_acc_eer(scores: np.ndarray, labels: np.ndarray) -> Tuple[float, float]:
     thresholds = np.linspace(scores.min(), scores.max(), 200)
-    best_acc, best_eer = 0.0, 1.0
+    best_acc = 0.0
     for t in thresholds:
         pred = (scores >= t).astype(np.int32)
         best_acc = max(best_acc, float((pred == labels).mean()))
-        pos, neg = labels == 1, labels == 0
-        if pos.any() and neg.any():
-            fpr = float((pred[neg] == 1).mean())
-            fnr = float((pred[pos] == 0).mean())
-            best_eer = min(best_eer, 0.5 * (fpr + fnr))
-    return best_acc, best_eer
+    return best_acc, equal_error_rate(scores, labels)
 
 
 @torch.no_grad()

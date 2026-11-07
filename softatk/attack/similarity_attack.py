@@ -9,21 +9,27 @@ import numpy as np
 
 def _aggregate(scores: np.ndarray, genders: np.ndarray, n: int, mode: str) -> int:
     """Infer gender from top-n gallery matches."""
-    order = np.argsort(-scores)[:n]
-    g = genders[order].astype(np.float64)
-    s = scores[order]
     if mode == "majority":
-        return int(np.round(g.mean()))
-    if mode == "average":
-        # soft vote by gender of top-n (unweighted mean of labels)
-        return int(np.round(g.mean()))
-    if mode == "linear":
-        w = np.linspace(n, 1, num=len(g))
-        return int(np.round(np.average(g, weights=w)))
-    if mode == "log":
-        w = 1.0 / np.log2(np.arange(2, len(g) + 2))
-        return int(np.round(np.average(g, weights=w)))
-    raise ValueError(mode)
+        top = genders[np.argsort(-scores)[:n]].astype(np.int64)
+        return int(np.bincount(top, minlength=2).argmax())
+    if mode not in ("average", "linear", "log"):
+        raise ValueError(mode)
+    # Sec. III-B: one list of top-n similarity scores per attribute, argmax of its evidence
+    evidence = []
+    for attribute in (0, 1):
+        s = np.sort(scores[genders == attribute])[::-1][:n]
+        if len(s) == 0:
+            evidence.append(-np.inf)
+            continue
+        i = np.arange(1, len(s) + 1)
+        if mode == "average":
+            w = np.ones(len(s))
+        elif mode == "linear":
+            w = 1.0 - i / (n + 1)
+        else:
+            w = -np.log(i / (n + 1))
+        evidence.append(float(np.mean(w * s)))
+    return int(np.argmax(evidence))
 
 
 def attack_success(
